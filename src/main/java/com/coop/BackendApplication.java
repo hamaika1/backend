@@ -17,19 +17,19 @@ public class BackendApplication implements CommandLineRunner {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-	@Autowired
-	private ProductoRepository productoDAO;
-
+	
+    //@Autowired private ProductoRepository productoDAO;
+	 
 	@Override
 	public void run(String... args) throws Exception {
-
-		Producto p1 = new Producto();
-		p1.setPrecio(45.56);
-		p1.setProducto("Arroz");
-		p1.setFechaVencimiento(new Date());
-
-		p1=productoDAO.save(p1);
-		
+		/*
+		 * Producto p1 = new Producto();
+		 * 
+		 * p1.setPrecio(45.56); 
+		 * p1.setProducto("Arroz"); 
+		 * p1.setFechaVencimiento(new Date());
+		 *
+		 * p1=productoDAO.save(p1);
+		 */
 	}
-
 }
