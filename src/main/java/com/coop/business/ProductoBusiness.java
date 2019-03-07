@@ -68,4 +68,19 @@ public class ProductoBusiness implements IProductoBusiness {
 		}
 	}
 
+	@Override
+	public List<Producto> filterList(String partName, double precioDesde, double precioHasta) throws BusinessException {
+		try {
+			if (partName != null && partName.trim().length() > 2) {
+				return productoDAO.findByProductoLike("%" + partName + "%");
+			} else if (precioDesde <= precioHasta && precioDesde > 0) {
+				return productoDAO.findByPrecioBetween(precioDesde, precioHasta);
+			} else {
+				throw new BusinessException("Parametros Incorrectos");
+			}
+		} catch (BusinessException e) {
+			throw new BusinessException(e);
+		}
+	}
+
 }

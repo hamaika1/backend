@@ -5,8 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coop.business.BusinessException;
@@ -21,9 +26,20 @@ public class ProductoRestService {
 	private IProductoBusiness productoBusiness;
 
 	@GetMapping("/productos")
-	public ResponseEntity<List<Producto>> list() {
+	public ResponseEntity<List<Producto>> list(
+			@RequestParam(required = false, defaultValue = "@*@", value = "q") String partName,
+			@RequestParam(required = false, defaultValue = "-1", value = "pdesde") double precioDesde,
+			@RequestParam(required = false, defaultValue = "-1", value = "phasta") double precioHasta) {
 		try {
-			return new ResponseEntity<List<Producto>>(productoBusiness.list(), HttpStatus.OK);
+			List<Producto> lista;
+			if (!partName.equals("@*@")) {
+				lista = productoBusiness.filterList(partName, 0, 0);
+			} else if (precioDesde != -1 && precioHasta != -1) {
+				lista = productoBusiness.filterList(null, precioDesde, precioHasta);
+			} else {
+				lista = productoBusiness.list();
+			}
+			return new ResponseEntity<List<Producto>>(lista, HttpStatus.OK);
 		} catch (BusinessException e) {
 			return new ResponseEntity<List<Producto>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -41,11 +57,36 @@ public class ProductoRestService {
 	}
 
 	@PostMapping("/productos")
-	public ResponseEntity<Producto> add(Producto producto) {
+	public ResponseEntity<Producto> add(@RequestBody Producto producto) {
 		try {
-			return new ResponseEntity<Producto>(productoBusiness.add(producto), HttpStatus.OK);
+			return new ResponseEntity<Producto>(productoBusiness.add(producto), HttpStatus.CREATED);
 		} catch (BusinessException e) {
 			return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@PutMapping("/productos")
+	public ResponseEntity<Producto> update(@RequestBody Producto producto) {
+		try {
+			return new ResponseEntity<Producto>(productoBusiness.update(producto), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@DeleteMapping("/productos/{id}")
+	public ResponseEntity<String> delete(@PathVariable("id") long id) {
+		try {
+			productoBusiness.delete(id);
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	/*
+	 * GET /poductos <- Obtener la lista de productos GET /productos/{id} <- Obtener
+	 * un producto cuyo id sea {id} POST /productos <- Agregar un nuveo producto (va
+	 * en el body) PUT /productos <- Modificar un producto existente(va en el body)
+	 * DELETE /productos/{id} <- Elimina un producto cuyo id sea {id}
+	 */
 }
