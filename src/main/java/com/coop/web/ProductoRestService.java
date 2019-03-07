@@ -40,7 +40,7 @@ public class ProductoRestService {
 		}
 	}
 
-	@GetMapping("/productos")
+	@PostMapping("/productos")
 	public ResponseEntity<Producto> add(Producto producto) {
 		try {
 			return new ResponseEntity<Producto>(productoBusiness.add(producto), HttpStatus.OK);
