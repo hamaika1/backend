@@ -19,6 +19,7 @@ import com.coop.business.BusinessException;
 import com.coop.business.IProductoBusiness;
 import com.coop.business.NotFoundException;
 import com.coop.model.Producto;
+import com.coop.model.dto.ProductoSintetico;
 
 @RestController
 @RequestMapping(Constantes.URL_PRODCUTOS)
@@ -85,10 +86,29 @@ public class ProductoRestService {
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
 	/*
 	 * GET /poductos <- Obtener la lista de productos GET /productos/{id} <- Obtener
 	 * un producto cuyo id sea {id} POST /productos <- Agregar un nuveo producto (va
 	 * en el body) PUT /productos <- Modificar un producto existente(va en el body)
 	 * DELETE /productos/{id} <- Elimina un producto cuyo id sea {id}
 	 */
+	@GetMapping("/sintetico")
+	public ResponseEntity<List<ProductoSintetico>> listadoSintetico(@RequestParam(value = "precio_minimo") double precioMinimo) {
+		try {
+			return new ResponseEntity<List<ProductoSintetico>>(productoBusiness.listadoSintetico(precioMinimo), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<List<ProductoSintetico>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/cantidad_mas_caros_que")
+	public ResponseEntity<Long> cantidadProductosMasCarosQue(
+			@RequestParam(value = "precio_minimo") double precioMinimo) {
+		try {
+			return new ResponseEntity<Long>(productoBusiness.cantidadProductosMasCarosQue(precioMinimo), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Long>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
