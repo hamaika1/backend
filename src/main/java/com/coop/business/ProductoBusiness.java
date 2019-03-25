@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.coop.model.Producto;
@@ -102,6 +105,33 @@ public class ProductoBusiness implements IProductoBusiness {
 			throw new BusinessException(e);
 		}
 
+	}
+
+	@Override
+	public int updatePrecio(double precio, long id) throws BusinessException {
+		try {
+			return productoDAO.updatePrecio(precio, id);
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
+	}
+
+	@Override
+	public List<Producto> listPageable(int pagina, int tamanio) throws BusinessException {
+		try {
+			return productoDAO.findAll(PageRequest.of(pagina, tamanio)).getContent();
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
+	}
+
+	@Override
+	public List<Producto> listSortable() throws BusinessException {
+		try {
+			return productoDAO.findAll(Sort.by("producto").ascending().and(Sort.by("precio").descending()));
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 	}
 
 }
