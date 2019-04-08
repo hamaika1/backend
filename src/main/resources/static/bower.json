@@ -1,0 +1,9 @@
+{
+"name":"backend",
+"version":"0.0.1",
+"dependencies":{
+	"angular":"~1.7.0",
+	"bootstrap":"~3.3.0"
+	}
+
+}
